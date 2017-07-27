@@ -1,23 +1,20 @@
-var googleSheetProjects = 'https://docs.google.com/spreadsheets/d/12diI3t7gfX-ysGFhsf1FGRH-J2D6DOJb3ZVmAASxNbg/pubhtml';
-var googleSheetStudents = 'https://docs.google.com/spreadsheets/d/1t4HvL0A2IVrEthJ4_KwD48BMRCi61fTYsya5K0u3UIU/pubhtml';
+var partnersURL = 'https://docs.google.com/spreadsheets/d/1y_FVjRDYBBpUN4Pxf5iMjlAJH4bx9qhdzPoLw9fiU0A/pubhtml';
+var studentsURL = '';
+var facultyURL = '';
 
-WHOSE_FIRST_CHOICE = true;
+WHOSE_FIRST_CHOICE = false;
 
 Tabletop.init({
-  key: googleSheetProjects,
-  callback: processProjects,
+  key: partnersURL,
+  callback: processData,
   simpleSheet: true,
 });
 
-function processProjects(data, tabletop) {
+function processData(data, tabletop) {
   if (!data[0]) return;
 
-  var skipColumns = ['Timestamp', 'Display', 'Project Letter'];
-
   for (i in data) {
-    if (!data[i].Display || data[i].Display.toLowerCase() !== 'y') {
-      continue;
-    }
+    if (data[i].Display !== 'y') continue;
 
     var letter = data[i]['Project Letter'];
     if (!letter) continue;
@@ -25,21 +22,20 @@ function processProjects(data, tabletop) {
     $('body').append('<div class="project-div" id="project-' + letter + '"></div>');
     var div = '#project-' + letter;
 
+    var org = data[i]['What is your organization and its mission?'];
+    var project = data[i]['What is your proposed problem and/or researchable question?'];
+    var impact = data[i]['Why does it matter?'];
+
     $(div).append('<h1>Project ' + letter + '</h1>');
+    $(div).append('<div class="hr" style="background:#' + Math.random().toString(16).substr(-6) + '"></div>');
+    $(div).append('<p><span>ORGANIZATION</span><br>' + org + '</p>');
+    $(div).append('<p><span>PROJECT</span><br>' + project + '</p>');
+    $(div).append('<p><span>IMPACT</span><br>' + impact + '</p>');
 
-    var keys = Object.keys(data[i]);
-
-    for (j in keys) {
-      var k = keys[j];
-      if (skipColumns.indexOf(k) > -1) continue;
-
-      $(div).append('<h4>' + k + '</h4>');
-      $(div).append('<div>' + data[i][k] + '</div>');
-    }
   }
 
   Tabletop.init({
-    key: googleSheetStudents,
+    key: studentsURL,
     simpleSheet: true,
     callback: function(data) {
 
