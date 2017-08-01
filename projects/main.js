@@ -16,17 +16,17 @@ function processData(data, tabletop) {
   for (i in data) {
     if (data[i].Display !== 'y') continue;
 
-    var letter = data[i]['Project Letter'];
-    if (!letter) continue;
+    var proj = data[i]['Project Name'];
+    if (!proj) continue;
 
-    $('body').append('<div class="project-div" id="project-' + letter + '"></div>');
-    var div = '#project-' + letter;
+    $('body').append('<div class="project-div" id="project-' + proj + '"></div>');
+    var div = '#project-' + proj;
 
     var org = data[i]['What is your organization and its mission?'];
     var project = data[i]['What is your proposed problem and/or researchable question?'];
     var impact = data[i]['Why does it matter?'];
 
-    $(div).append('<h1>Project ' + letter + '</h1>');
+    $(div).append('<h1>Project ' + proj + '</h1>');
     $(div).append('<div class="hr" style="background:#' + Math.random().toString(16).substr(-6) + '"></div>');
     $(div).append('<p><span>ORGANIZATION</span><br>' + org + '</p>');
     $(div).append('<p><span>PROJECT</span><br>' + project + '</p>');
@@ -58,15 +58,15 @@ function processStudentsAndFaculty(who) {
 
           choices.forEach(function(choice) {
             if (key.indexOf(choice) > -1) {
-              var letter = row[key].split(' ')[1];
-              if (!projects[letter]) {
-                projects[letter] = {};
+              var proj = row[key].split(' ')[0];
+              if (!projects[proj]) {
+                projects[proj] = {};
               }
-              if (!projects[letter][choice]) {
-                projects[letter][choice] = [];
+              if (!projects[proj][choice]) {
+                projects[proj][choice] = [];
               }
 
-              projects[letter][choice].push(name);
+              projects[proj][choice].push(name);
             }
           });
         }
@@ -74,16 +74,16 @@ function processStudentsAndFaculty(who) {
 
       var projectKeys = Object.keys(projects);
       for (p in projectKeys) {
-        var letter = projectKeys[p];
+        var proj = projectKeys[p];
         var message = (who == 'f')
           ? 'No faculty members have selected this project as their favorite. '
           : 'No students have selected this project as their first choice yet.';
 
-        if (projects[letter]['1st']) {
-          var n = projects[letter]['1st'].length;
+        if (projects[proj]['1st']) {
+          var n = projects[proj]['1st'].length;
           if (n > 0) {
             if (SHOW_NAMES || who == 'f') {
-              message = projects[letter]['1st'].join(', ');
+              message = projects[proj]['1st'].join(', ');
             } else {
               message = n + ' student' + (n == 1 ? '' : 's');
             }
@@ -93,7 +93,7 @@ function processStudentsAndFaculty(who) {
           }
         }
 
-        $('#project-' + letter + ' .additional').append(message);
+        $('#project-' + proj + ' .additional').append(message);
       }
 
       if (who == 'f') {
