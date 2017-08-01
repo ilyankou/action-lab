@@ -2,8 +2,6 @@ var partnersURL = 'https://docs.google.com/spreadsheets/d/1y_FVjRDYBBpUN4Pxf5iMj
 var studentsURL = 'https://docs.google.com/spreadsheets/d/1xb2gFO1So3U1r6mYPJ28XHDw7s-M2h49kSFHzbJODMI/pubhtml';
 var facultyURL = 'https://docs.google.com/spreadsheets/d/1TNppz6r-A8lC1tA5zwO_3AqRGYkNX-dgwazEIpEtudc/pubhtml';
 
-SHOW_NAMES = true;
-
 Tabletop.init({
   key: partnersURL,
   callback: processData,
@@ -75,10 +73,27 @@ function processStudentsAndFaculty(who) {
       var projectKeys = Object.keys(projects);
       for (p in projectKeys) {
         var proj = projectKeys[p];
-        var message = (who == 'f')
-          ? 'No faculty members have selected this project as their favorite. '
-          : 'No students have selected this project as their first choice yet.';
+        var message = '';
 
+        if (who === 's') {
+          var t = projects[proj];
+          console.log(t)
+          var n = Object.keys(t).map(function(x) {return t[x].length;}).reduce(function(a, b) {return a+b;});
+          if (n > 0) {
+            message = n + ' student' + (n == 1 ? '' : 's') + ' prefer' + (n != 1 ? '' : 's') + ' this project.';
+          }
+        } else {
+          var t = projects[proj]['1st'];
+          if (t) {
+            var n = t.length;
+            if (n > 0) {
+              message = 'Professor' + (n == 1 ? ' ' : 's ') + t.join(', ') + ' prefer' + (n != 1 ? '' : 's') + ' this project.<br>';
+            }
+          }
+        }
+
+
+        /*
         if (projects[proj]['1st']) {
           var n = projects[proj]['1st'].length;
           if (n > 0) {
@@ -88,10 +103,10 @@ function processStudentsAndFaculty(who) {
               message = n + ' student' + (n == 1 ? '' : 's');
             }
             message += (who == 'f')
-              ? ' listed this project as their favorite. '
+              ? ' prefers this project.'
               : ' listed this project as their first choice.';
           }
-        }
+        } */
 
         $('#project-' + proj + ' .additional').append(message);
       }
